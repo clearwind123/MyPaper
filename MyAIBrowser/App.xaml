@@ -1,0 +1,269 @@
+<!-- 文件路径：MyAIBrowser/App.xaml -->
+<!-- 功能：应用程序资源定义。浅色 + 绿色主题（参考 ui.css 设计语言） -->
+<Application x:Class="MyAIBrowser.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <!-- ============ 颜色（参考 ui.css 的绿色系与文字色） ============ -->
+        <SolidColorBrush x:Key="Green50"   Color="#F2F9F4"/>
+        <SolidColorBrush x:Key="Green100"  Color="#E6F3EB"/>
+        <SolidColorBrush x:Key="Green150"  Color="#D9EDE1"/>
+        <SolidColorBrush x:Key="Green500"  Color="#57A77C"/>
+        <SolidColorBrush x:Key="Green600"  Color="#3F8F63"/>
+        <SolidColorBrush x:Key="Green700"  Color="#2F7A52"/>
+        <SolidColorBrush x:Key="TextMain"  Color="#2C2C2C"/>
+        <SolidColorBrush x:Key="TextSub"   Color="#8A8A8A"/>
+        <SolidColorBrush x:Key="HoverGray" Color="#F0F0F0"/>
+        <SolidColorBrush x:Key="BorderLine" Color="#E5E6EB"/>
+        <SolidColorBrush x:Key="WindowBg"   Color="#F5F6F8"/>
+        <SolidColorBrush x:Key="TitleBarBg" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TabBarBg"   Color="#FAFBFC"/>
+
+        <!-- 全局字体：现代中文 UI 字体（微软雅黑 UI），更清晰耐看 -->
+        <FontFamily x:Key="AppFont">Microsoft YaHei UI, Segoe UI, sans-serif</FontFamily>
+
+        <!-- 图标字体：Windows 10/11 内置（Segoe Fluent Icons 为 Win11，MDL2 为 Win10，按可用性回退） -->
+        <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+        <!-- ============ 窗口控制按钮（最小化/最大化/关闭） ============ -->
+        <Style x:Key="WindowButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSub}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource HoverGray}"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="WindowCloseButton" TargetType="Button" BasedOn="{StaticResource WindowButton}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E81123"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ============ 对话框阴影 ============ -->
+        <DropShadowEffect x:Key="DialogShadow" BlurRadius="20" ShadowDepth="3" Direction="270" Opacity="0.35" Color="#000000"/>
+
+        <!-- ============ 工具栏圆形图标按钮（后退/前进/刷新/主页） ============ -->
+        <Style x:Key="RoundIconButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource HoverGray}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============ 通用按钮（对话框/侧边栏用） ============ -->
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource AppFont}"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Background" Value="{StaticResource Green600}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Green700}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 次级按钮：白底灰边，悬停浅灰（独立模板，避免被基类绿色悬停覆盖） -->
+        <Style x:Key="GhostButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource AppFont}"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderLine}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource HoverGray}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BorderLine}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 浅绿色悬停/点击按钮（侧边栏"添加站点"等）：独立模板保证悬停=浅绿、按下=更浅绿 -->
+        <Style x:Key="GreenHoverButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource AppFont}"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource Green700}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Green500}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Green100}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Green150}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============ 标签页（参考 ui.css .tab：圆角上角 选中浅绿） ============ -->
+        <Style x:Key="BrowserTab" TargetType="ListBoxItem">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinWidth" Value="220"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="2,0,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="TabBorder"
+                                Background="Transparent"
+                                CornerRadius="8,8,0,0"
+                                BorderThickness="0,0,0,2"
+                                BorderBrush="Transparent"
+                                Padding="12,0,6,0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{StaticResource HoverGray}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{StaticResource Green100}"/>
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{StaticResource Green600}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============ 侧边栏站点列表项 ============ -->
+        <Style x:Key="SiteListItem" TargetType="ListBoxItem">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="6,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="6" Padding="8,0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Green100}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Green150}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============ 对话框标题栏（无边框对话框共用） ============ -->
+        <Style x:Key="DialogHeader" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource TitleBarBg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderLine}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
+        <Style x:Key="DialogTitleText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource AppFont}"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="16,0,0,0"/>
+        </Style>
+
+    </Application.Resources>
+</Application>

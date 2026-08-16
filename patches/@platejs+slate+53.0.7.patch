@@ -1,0 +1,22 @@
+diff --git a/node_modules/@platejs/slate/dist/index.js b/node_modules/@platejs/slate/dist/index.js
+index 1758522..fdc155b 100644
+--- a/node_modules/@platejs/slate/dist/index.js
++++ b/node_modules/@platejs/slate/dist/index.js
+@@ -2747,7 +2747,7 @@ const withHistory = (editor) => {
+ 		if (save) {
+ 			if (merge == null) if (lastBatch == null) merge = false;
+ 			else if (operations.length > 0) merge = true;
+-			else merge = shouldMerge(op, lastOp);
++			else { merge = false; } // [patch] never merge new batch first op: each user input batch is its own undo unit
+ 			if (e.api.isSplittingOnce()) {
+ 				merge = false;
+ 				e.tf.setSplittingOnce(void 0);
+@@ -2760,7 +2760,7 @@ const withHistory = (editor) => {
+ 				};
+ 				e.writeHistory("undos", batch);
+ 			}
+-			while (undos.length > 100) undos.shift();
++			while (undos.length > 5000) undos.shift();
+ 			history.redos = [];
+ 		}
+ 		apply$1(op);

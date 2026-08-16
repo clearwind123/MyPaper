@@ -1,0 +1,118 @@
+diff --git a/node_modules/mammoth/lib/document-to-html.js b/node_modules/mammoth/lib/document-to-html.js
+index bd750f0..55c2e1b 100644
+--- a/node_modules/mammoth/lib/document-to-html.js
++++ b/node_modules/mammoth/lib/document-to-html.js
+@@ -118,20 +118,56 @@ function DocumentConversion(options, comments) {
+             if (element.styleId) {
+                 messages.push(unrecognisedStyleWarning("paragraph", element));
+             }
+-            return defaultParagraphStyle;
++            return paragraphPathWithIndent(element);
+         }
+     }
+ 
++    // [MyPaper patch] 把 Word 段落缩进（w:ind）输出为内联样式：
++    // firstLine/hanging → text-indent（悬挂缩进为负值），start/end → margin-left/right。
++    // 单位换算：OOXML 用 twips（1/20 pt），HTML 用 pt。
++    // [MyPaper patch] 把 Word 段落对齐（w:jc）输出为内联样式（mammoth 原版丢弃 alignment）。
++    // 仅支持编辑器有的左/中/右（1.0 不做两端对齐）：left/both 不输出（默认左对齐）。
++    function paragraphPathWithIndent(element) {
++        var indent = element.indent || {};
++        var styleParts = [];
++        if (element.alignment === "center" || element.alignment === "right") {
++            styleParts.push("text-align: " + element.alignment);
++        }
++        if (indent.firstLine || indent.hanging) {
++            var textIndent = (parseInt(indent.firstLine || 0, 10) - parseInt(indent.hanging || 0, 10)) / 20;
++            if (textIndent !== 0) {
++                styleParts.push("text-indent: " + textIndent + "pt");
++            }
++        }
++        if (indent.start) {
++            styleParts.push("margin-left: " + (parseInt(indent.start, 10) / 20) + "pt");
++        }
++        if (indent.end) {
++            styleParts.push("margin-right: " + (parseInt(indent.end, 10) / 20) + "pt");
++        }
++        if (styleParts.length > 0) {
++            return htmlPaths.topLevelElement("p", {style: styleParts.join("; ")});
++        }
++        return defaultParagraphStyle;
++    }
++
+     function convertRun(run, messages, options) {
+         var nodes = function() {
+             return convertElements(run.children, messages, options);
+         };
+         var paths = [];
++        // [MyPaper patch] 高亮：styleMap 未配置 highlight 时兜底输出 <mark>（Plate HighlightPlugin 认 MARK 标签）
+         if (run.highlight !== null) {
+-            var path = findHtmlPath({type: "highlight", color: run.highlight});
+-            if (path) {
+-                paths.push(path);
+-            }
++            var highlightPath = findHtmlPath({type: "highlight", color: run.highlight});
++            paths.push(highlightPath || htmlPaths.element("mark", {}, {fresh: false}));
++        }
++        // [MyPaper patch] 文字颜色：w:color → <span style="color: #XXXXXX">
++        if (run.color) {
++            paths.push(htmlPaths.element("span", {style: "color: " + run.color}, {fresh: false}));
++        }
++        // [MyPaper patch] 字号：w:sz（半磅）→ <span style="font-size: Xpt">（Plate BaseFontSizePlugin 认 style.fontSize）
++        if (run.fontSize) {
++            paths.push(htmlPaths.element("span", {style: "font-size: " + run.fontSize + "pt"}, {fresh: false}));
+         }
+         if (run.isSmallCaps) {
+             paths.push(findHtmlPathForRunProperty("smallCaps"));
+diff --git a/node_modules/mammoth/lib/documents.js b/node_modules/mammoth/lib/documents.js
+index 2613a7a..52d16a6 100644
+--- a/node_modules/mammoth/lib/documents.js
++++ b/node_modules/mammoth/lib/documents.js
+@@ -65,7 +65,9 @@ function Run(children, properties) {
+         verticalAlignment: properties.verticalAlignment || verticalAlignment.baseline,
+         font: properties.font || null,
+         fontSize: properties.fontSize || null,
+-        highlight: properties.highlight || null
++        highlight: properties.highlight || null,
++        // [MyPaper patch] 文字颜色（w:color → #XXXXXX，见 body-reader readColorValue）
++        color: properties.color || null
+     };
+ }
+ 
+diff --git a/node_modules/mammoth/lib/docx/body-reader.js b/node_modules/mammoth/lib/docx/body-reader.js
+index 2ec9d0d..4d93615 100644
+--- a/node_modules/mammoth/lib/docx/body-reader.js
++++ b/node_modules/mammoth/lib/docx/body-reader.js
+@@ -97,7 +97,9 @@ function BodyReader(options) {
+                 isStrikethrough: readBooleanElement(element.first("w:strike")),
+                 isAllCaps: readBooleanElement(element.first("w:caps")),
+                 isSmallCaps: readBooleanElement(element.first("w:smallCaps")),
+-                highlight: readHighlightValue(element.firstOrEmpty("w:highlight").attributes["w:val"])
++                highlight: readHighlightValue(element.firstOrEmpty("w:highlight").attributes["w:val"]),
++                // [MyPaper patch] 读取文字颜色（w:color，如 "FF0000" / "auto"）
++                color: readColorValue(element.firstOrEmpty("w:color").attributes["w:val"])
+             };
+         });
+     }
+@@ -127,9 +129,19 @@ function BodyReader(options) {
+     function readHighlightValue(value) {
+         if (!value || value === "none") {
+             return null;
+-        } else {
+-            return value;
++        } else {            return value;
++        }
++    }
++
++    // [MyPaper patch] 读取文字颜色：w:color val 可能是 "FF0000"（需补 #）、"auto"（默认黑）或主题色引用
++    function readColorValue(value) {
++        if (!value || value === "auto" || value === "none") {
++            return null;
++        }
++        if (/^[0-9A-Fa-f]{6}$/.test(value)) {
++            return "#" + value.toUpperCase();
+         }
++        return value;
+     }
+ 
+     function readParagraphStyle(element) {

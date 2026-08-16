@@ -1,0 +1,28 @@
+<!-- 文件路径：MyAIBrowser/MyAIBrowser.csproj -->
+<!-- 功能：项目配置文件，定义目标框架和依赖包 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <!-- 应用图标（exe 文件图标 + 任务栏） -->
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <!-- 软件名称统一为 MyAI Browser（exe / dll / 元数据） -->
+    <AssemblyName>MyAI Browser</AssemblyName>
+    <Product>MyAI Browser</Product>
+    <Description>轻量级 AI 网站浏览器壳</Description>
+    <AssemblyTitle>MyAI Browser</AssemblyTitle>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="App.ico"/>
+  </ItemGroup>
+
+</Project>

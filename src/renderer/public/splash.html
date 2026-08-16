@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MyPaper</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: transparent; }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* mini 形象（线条版）：弹跳入场 */
+  .mascot-wrap {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+    animation: mascotIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards;
+  }
+  @keyframes mascotIn {
+    from { opacity: 0; transform: translateY(26px) scale(0.7); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  /* 呼吸浮动 */
+  .mascot-body {
+    animation: breathe 2.6s ease-in-out 1s infinite;
+    transform-origin: 50% 85%;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  /* 头顶叶子摆动 */
+  .leaf {
+    /* fill-box：transform-origin 相对叶子自身（默认相对整个 viewBox，摆动会大幅位移穿模） */
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: leafWave 1.8s ease-in-out 0.9s infinite;
+  }
+  .leaf-l { animation-delay: 0s; }
+  .leaf-r { animation-delay: 0.9s; }
+  @keyframes leafWave {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(7deg); }
+  }
+  /* 眼睛眨眼 */
+  .eye {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: blink 3.2s infinite;
+  }
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95%, 97% { transform: scaleY(0.1); }
+  }
+  .eye-l { animation-delay: 0.1s; }
+  .eye-r { animation-delay: 0.1s; }
+
+  /* 结束淡出（主进程到点后添加，与主窗口淡入衔接） */
+  body.fade-out {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+</style>
+</head>
+<body>
+  <!-- mini 形象（线条风格）：小芽精灵，无填充、无文字、背景透明 -->
+  <div class="mascot-wrap">
+    <svg width="150" height="150" viewBox="0 0 132 132" fill="none" stroke="#2e7d52" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- 头顶叶子（线条） -->
+      <g class="leaf leaf-l">
+        <path d="M66 40 C 62 26, 48 20, 36 24 C 40 34, 52 40, 66 40 Z"/>
+      </g>
+      <g class="leaf leaf-r">
+        <path d="M66 40 C 70 26, 84 20, 96 24 C 92 34, 80 40, 66 40 Z"/>
+      </g>
+      <!-- 小芽茎 -->
+      <path d="M63.5 38 C 63.5 43, 64.5 45, 66 45 C 67.5 45, 68.5 43, 68.5 38"/>
+      <!-- 圆脑袋（线条） -->
+      <circle class="mascot-body" cx="66" cy="76" r="42" stroke="#3f8f63"/>
+      <!-- 眼睛（空心圆 + 高光点，眨眼） -->
+      <g class="eye eye-l">
+        <circle cx="54" cy="72" r="6.2" fill="#2e4a3a" stroke="none"/>
+        <circle cx="56.2" cy="70.2" r="2.2" fill="#fff" stroke="none"/>
+      </g>
+      <g class="eye eye-r">
+        <circle cx="78" cy="72" r="6.2" fill="#2e4a3a" stroke="none"/>
+        <circle cx="80.2" cy="70.2" r="2.2" fill="#fff" stroke="none"/>
+      </g>
+      <!-- 微笑 -->
+      <path d="M56 88 Q 66 98, 76 88"/>
+      <!-- 小脚（线条） -->
+      <ellipse cx="52" cy="118" rx="8" ry="4.5"/>
+      <ellipse cx="80" cy="118" rx="8" ry="4.5"/>
+    </svg>
+  </div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{
+  "name": "mypaper",
+  "version": "1.0.0",
+  "description": "MyPaper - 论文写作软件",
+  "main": "./out/main/index.js",
+  "author": "MyPaper",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "build:win": "npm run build && electron-builder --win",
+    "build:dir": "npm run build && electron-builder --dir",
+    "postinstall": "patch-package && node scripts/copy-pdfjs-cmaps.mjs && node scripts/copy-tesseract.mjs",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web"
+  },
+  "build": {
+    "appId": "com.mypaper.app",
+    "productName": "MyPaper",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      { "from": "build/handbook", "to": "handbook" },
+      { "from": "MyAI Browser-发布包", "to": "MyAI Browser" }
+    ],
+    "files": [
+      "out/**",
+      "package.json",
+      "!node_modules/**"
+    ],
+    "npmRebuild": false,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MyPaper",
+      "installerIcon": "installer.ico",
+      "uninstallerIcon": "installer.ico",
+      "artifactName": "MyPaper-Setup-${version}.${ext}"
+    },
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    }
+  },
+  "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@file-viewer/preset-lite": "^2.2.5",
+    "@file-viewer/preset-office": "^2.2.5",
+    "@file-viewer/react": "^2.2.5",
+    "@platejs/basic-nodes": "^53.0.0",
+    "@platejs/basic-styles": "^53.0.0",
+    "@platejs/code-block": "^53.0.0",
+    "@platejs/docx": "^53.0.0",
+    "@platejs/docx-io": "^53.3.2",
+    "@platejs/emoji": "^53.1.7",
+    "@platejs/find-replace": "^53.0.0",
+    "@platejs/list-classic": "^53.0.0",
+    "@platejs/markdown": "^53.2.2",
+    "@platejs/math": "^53.0.0",
+    "@platejs/media": "^53.1.4",
+    "@platejs/table": "^53.0.9",
+    "@tesseract.js-data/chi_sim": "^1.0.0",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "exceljs": "^4.4.0",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^1.28.0",
+    "pdfjs-dist": "^6.2.108",
+    "platejs": "^53.2.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "tesseract.js": "^7.0.0",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@file-viewer/vite-plugin": "^2.2.5",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^5.2.0",
+    "buffer": "^6.0.3",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "events": "^3.3.0",
+    "patch-package": "^8.0.1",
+    "path-browserify": "^1.0.1",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.3",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6"
+  }
+}

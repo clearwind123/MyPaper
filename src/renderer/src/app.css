@@ -1,0 +1,793 @@
+/* ============ MyPaper v0.1 基础样式 ============ */
+
+:root {
+  /* 底板与卡片（2026-08-08 按用户参考图调整：底板 BC.png #F5F7FA、文件夹卡片 FC.png #FBFBFB） */
+  --bg-board: #f5f7fa;
+  --card-white: #ffffff;
+  --card-folder: #fbfbfb;
+
+  /* 强调色（浅绿 / 深绿，不要太深；深绿已调浅一档，浅绿保留） */
+  --green-700: #357a55;
+  --green-600: #3f8f63;
+  --green-500: #55a97c;
+  --green-150: #d3ecdc;
+  --green-100: #e6f4ea;
+  --green-50: #f0f8f2;
+
+  /* 文字 */
+  --text-main: #2f2f2f;
+  --text-sub: #8a8a8a;
+
+  /* 交互底色 */
+  --hover-gray: rgba(0, 0, 0, 0.07);
+  --active-gray: rgba(0, 0, 0, 0.1);
+  --close-red: #e81123;
+
+  /* 布局 */
+  --radius: 12px;
+  --rail-width: 64px;
+  --folder-width: 260px;
+}
+
+/* ===== 浏览器默认样式统一为软件主题（浅绿系） ===== */
+
+/* 选中文字：浅绿背景（替代浏览器默认蓝色；PDF/xlsx 局部 selection 特异性更高，保持其透明文字/绿色） */
+::selection {
+  background: var(--green-150);
+  color: inherit;
+}
+
+/* 键盘 Tab 聚焦：主题绿 outline（替代浏览器默认蓝色；鼠标点击不显示；
+   输入框等已有局部 :focus 样式的元素不受影响） */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--green-500);
+  outline-offset: -2px;
+}
+
+/* 输入光标：统一浅绿（编辑器已设，这里覆盖所有输入框/文本域/可编辑区） */
+input,
+textarea,
+[contenteditable] {
+  caret-color: var(--green-600);
+}
+
+/* placeholder：统一软件灰色（替代浏览器默认） */
+::placeholder {
+  color: var(--text-sub);
+  opacity: 0.75;
+}
+
+/* 表单控件字体继承（浏览器 button/input 默认不继承页面字体） */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* 下拉框：去掉浏览器系统外观，改主题绿自定义箭头（对话框里的 select） */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+select.dialog-input {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233f8f63' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 13px;
+  color: var(--text-main);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ============ 应用骨架：灰底板 ============ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-board);
+}
+
+/* ============ 顶部：悬浮条 + AI 图标 + 窗口按钮 ============ */
+
+.top-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 44px;
+  padding: 8px 0 0 12px;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.top-float-bar {
+  /* 白色悬浮条：预留位置，功能待定；缩短为原长 1/3 左右，水平居中于软件中心 */
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  width: 33%;
+  height: 28px;
+  background: var(--card-white);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.top-ai {
+  -webkit-app-region: no-drag;
+  color: var(--green-600);
+}
+
+/* 通用图标按钮：透明方块 + 悬停深灰 */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--text-main);
+  transition: background 0.12s;
+}
+
+.icon-btn:hover {
+  background: var(--hover-gray);
+}
+
+.icon-btn:active {
+  background: var(--active-gray);
+}
+
+/* 窗口控制按钮 */
+.win-controls {
+  display: flex;
+  margin-right: 8px; /* 关闭按钮离右边缘留出与上边缘一致的距离 */
+  -webkit-app-region: no-drag;
+}
+
+.win-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 36px;
+  color: var(--text-main);
+  transition: background 0.12s;
+}
+
+.win-btn:hover {
+  background: var(--hover-gray);
+}
+
+.win-btn:active {
+  background: var(--active-gray);
+}
+
+.win-btn-close:hover,
+.win-btn-close:active {
+  background: var(--close-red);
+  color: #fff;
+}
+
+/* ============ 主体布局 ============ */
+
+.body {
+  display: flex;
+  flex: 1;
+  padding: 24px 12px 0 12px;
+  gap: 6px;
+  min-height: 0;
+}
+
+/* ============ 左侧系统图标列（贴底板） ============ */
+
+.left-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--rail-width);
+  padding-top: 20px;
+  padding-bottom: 20px; /* 设置图标离下边缘留出距离 */
+  flex-shrink: 0;
+}
+
+/* 默认头像：灰色渐变圆底 + CSS 绘制白色人形（头 + 肩）；自定义头像时显示图片 */
+.rail-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #bcbcbc, #9c9c9c);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.rail-avatar::before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--card-white);
+}
+
+.rail-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 27px;
+  height: 19px;
+  border-radius: 50% 50% 0 0;
+  background: var(--card-white);
+}
+
+.rail-avatar.has-avatar::before,
+.rail-avatar.has-avatar::after {
+  display: none;
+}
+
+.rail-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.rail-avatar:hover {
+  filter: brightness(0.94);
+}
+
+/* 用户资料小卡片：点击左侧头像弹出（大头像 + 名字，上下居中排布） */
+.user-card-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+
+.user-card {
+  position: absolute;
+  top: 68px; /* 头像下方：rail padding-top 20px + 头像 40px + 间距 8px */
+  left: 8px;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px 14px;
+  background: var(--card-white);
+  border-radius: 10px;
+  /* 四周柔和阴影：外层大范围扩散 + 内层近距离投影 */
+  box-shadow:
+    0 0 24px rgba(0, 0, 0, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.16);
+  z-index: 100;
+}
+
+.user-card-avatar {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #bcbcbc, #9c9c9c);
+  overflow: hidden;
+}
+
+.user-card-avatar::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--card-white);
+}
+
+.user-card-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 28px;
+  border-radius: 50% 50% 0 0;
+  background: var(--card-white);
+}
+
+.user-card-avatar.has-avatar::before,
+.user-card-avatar.has-avatar::after {
+  display: none;
+}
+
+.user-card-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-card-name {
+  max-width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rail-sep {
+  flex-shrink: 0;
+}
+
+.rail-sep-big {
+  height: 18px;
+}
+
+.rail-sep-small {
+  height: 6px;
+}
+
+.rail-spacer {
+  flex: 1;
+}
+
+/* 系统图标：圆角方块，选中态左侧深绿竖线 */
+.rail-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 2px 0;
+  border-radius: 10px;
+  color: var(--text-main);
+  transition: background 0.12s;
+}
+
+.rail-icon:hover {
+  background: var(--hover-gray);
+}
+
+.rail-icon-active {
+  background: var(--green-100);
+  color: var(--green-600);
+}
+
+.rail-icon-active::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 28px; /* 比图标短一点 */
+  border-radius: 3px;
+  background: var(--green-600);
+}
+
+/* ============ 文件夹树卡片 ============ */
+
+.folder-card {
+  display: flex;
+  flex-direction: column;
+  width: var(--folder-width);
+  min-width: var(--folder-width);
+  background: var(--card-folder);
+  border-radius: var(--radius) var(--radius) 0 0;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.folder-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 8px 6px 14px;
+}
+
+.folder-card-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-card-title-icon {
+  color: var(--green-600);
+  flex-shrink: 0;
+}
+
+.folder-card-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.folder-card-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+  min-height: 0;
+}
+
+/* 空状态 */
+.tree-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  min-height: 160px;
+  color: var(--text-sub);
+}
+
+.tree-empty-img {
+  opacity: 0.35;
+}
+
+.tree-empty-text {
+  font-size: 12px;
+}
+
+/* ============ 工作区卡片 ============ */
+
+.workspace-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  background: var(--card-white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* 标签页栏 */
+.tabs-bar {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+/* 标签滚动区：标签过多时横向滚动，+ 按钮固定在右侧 */
+.tabs-scroll {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  /* 注意：不能设 scrollbar-width（标准属性），否则 Chromium 121+ 会忽略下方 ::-webkit-scrollbar 浅绿样式 */
+}
+
+/* 标签滚动条：浅绿主题 + 自动隐藏（平时透明，鼠标移到标签栏时才显示；色值硬编码 #d3ecdc=--green-150，
+   注意不能设标准 scrollbar-width 属性，否则 Chromium 121+ 会忽略 ::-webkit-scrollbar 样式） */
+.tabs-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tabs-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.tabs-scroll:hover::-webkit-scrollbar-thumb {
+  background: #d3ecdc;
+}
+
+.tabs-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* 左右滚动三角：浅绿色箭头（SVG data URI 全编码，decrement=左，increment=右），同样 hover 才显示 */
+.tabs-scroll::-webkit-scrollbar-button {
+  background-color: transparent !important;
+  width: 16px;
+  height: 8px;
+}
+
+.tabs-scroll::-webkit-scrollbar-button:horizontal:decrement,
+.tabs-scroll::-webkit-scrollbar-button:horizontal:increment {
+  background: none !important;
+}
+
+.tabs-scroll:hover::-webkit-scrollbar-button:horizontal:decrement {
+  background: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M6 1 L2.5 4 L6 7' fill='none' stroke='%2357a87a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px 10px no-repeat !important;
+}
+
+.tabs-scroll:hover::-webkit-scrollbar-button:horizontal:increment {
+  background: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M2 1 L5.5 4 L2 7' fill='none' stroke='%2357a87a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px 10px no-repeat !important;
+}
+
+/* 双保险：tabs-bar 自身也去掉默认滚动条外观（同样不能设 scrollbar-width，原因同上） */
+.tabs-bar::-webkit-scrollbar {
+  height: 0;
+}
+
+/* 编辑器独立窗口（右键标签「在新窗口中打开」）：隐藏左侧导航与文件夹树 */
+.app-editor-window .left-rail,
+.app-editor-window .folder-card {
+  display: none;
+}
+
+.tabs-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--text-sub);
+}
+
+.tabs-add:hover {
+  background: var(--hover-gray);
+  color: var(--text-main);
+}
+
+/* 工作区内容（flex column：让 .editor-pane 的 flex:1 生效，否则编辑器高度塌陷为 0）
+   position: relative：作为查找替换面板浮层的定位基准 */
+.workspace-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.workspace-empty {
+  /* flex row 容器中：flex:1 占满剩余宽度 + align-self 拉伸高度，水平垂直才真正居中 */
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-sub);
+}
+
+.workspace-empty-img {
+  opacity: 0.3;
+}
+
+.workspace-empty-text {
+  font-size: 13px;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  border-radius: 8px;
+  background: var(--green-600);
+  color: #fff;
+  font-size: 13px;
+  transition: background 0.12s;
+}
+
+.btn-primary:hover {
+  background: var(--green-700);
+}
+
+/* 底部状态栏（按钮图标+短文字，一行容下；内容紧凑以适配最小窗口） */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 12px;
+  color: var(--text-sub);
+  flex-shrink: 0;
+}
+
+.status-left {
+  display: flex;
+  gap: 18px;
+}
+
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 7px;
+  border-radius: 6px;
+  color: var(--text-sub);
+  font-size: 12px;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+
+.status-btn:hover {
+  background: var(--hover-gray);
+  color: var(--text-main);
+}
+
+.status-btn-save {
+  color: var(--green-600);
+}
+
+.status-btn-save:hover {
+  background: var(--green-100);
+  color: var(--green-700);
+}
+
+/* 导出下拉菜单 */
+.export-menu-wrap {
+  position: relative;
+}
+
+.status-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+
+.status-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  z-index: 81;
+  min-width: 150px;
+  padding: 4px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+.status-menu-item {
+  display: block;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-main);
+  text-align: left;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.status-menu-item:hover {
+  background: var(--hover-gray);
+  color: var(--green-700);
+}
+
+.status-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 8px;
+}
+
+.auto-save {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  font-size: 12px;
+  color: var(--green-600);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.auto-save:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.auto-save:active {
+  transform: scale(0.97);
+}
+
+/* 自动保存关闭：文字与图标变红，提示用户当前不会自动落盘 */
+.auto-save-off {
+  color: #d9534f;
+}
+
+/* 状态栏缩放显示：自动保存旁，Ctrl+滚轮调整，点击恢复 100% */
+.status-zoom {
+  display: flex;
+  align-items: center;
+  padding: 5px 9px;
+  font-size: 12px;
+  color: var(--text-sub);
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s, color 0.12s;
+}
+
+.status-zoom:hover {
+  background: var(--green-100);
+  color: var(--green-700);
+}
+
+/* 滚动条（细） */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}

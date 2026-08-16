@@ -1,0 +1,22 @@
+diff --git a/node_modules/app-builder-lib/out/util/electronGet.js b/node_modules/app-builder-lib/out/util/electronGet.js
+index a941f9d..1250f20 100644
+--- a/node_modules/app-builder-lib/out/util/electronGet.js
++++ b/node_modules/app-builder-lib/out/util/electronGet.js
+@@ -184,7 +184,16 @@ async function extractArchive(file, dir) {
+             throw new Error(`Extraction of ${path.basename(file)} produced no files`);
+         }
+         await fs.rm(dir, { recursive: true, force: true });
+-        await fs.rename(tmpDir, dir);
++        try {
++            await fs.rename(tmpDir, dir);
++        }
++        catch (renameErr) {
++            // Windows Defender 实时防护会持有新解压 electron 目录的句柄，目录 rename 报 EPERM
++            // （目录内文件读写/删除不受影响，唯独目录 rename 被拒）。回退复制+删除，语义等价。
++            builder_util_1.log.warn({ error: renameErr.message }, "directory rename failed, falling back to copy");
++            await fs.cp(tmpDir, dir, { recursive: true });
++            await fs.rm(tmpDir, { recursive: true, force: true });
++        }
+     }
+     finally {
+         await release().catch(err => builder_util_1.log.warn({ err }, "failed to release lockfile"));

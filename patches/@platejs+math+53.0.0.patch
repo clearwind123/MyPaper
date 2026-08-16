@@ -1,0 +1,22 @@
+diff --git a/node_modules/@platejs/math/dist/BaseInlineEquationPlugin-1MXNHk1G.js b/node_modules/@platejs/math/dist/BaseInlineEquationPlugin-1MXNHk1G.js
+index 7b9ea75..493b535 100644
+--- a/node_modules/@platejs/math/dist/BaseInlineEquationPlugin-1MXNHk1G.js
++++ b/node_modules/@platejs/math/dist/BaseInlineEquationPlugin-1MXNHk1G.js
+@@ -1,5 +1,4 @@
+-import { KEYS, bindFirst, createSlatePlugin } from "platejs";
+-import "katex/dist/katex.min.css";
++﻿import { KEYS, bindFirst, createSlatePlugin } from "platejs";
+ 
+ //#region src/lib/transforms/insertEquation.ts
+ const insertEquation = (editor, options) => {
+diff --git a/node_modules/@platejs/math/dist/react/index.js b/node_modules/@platejs/math/dist/react/index.js
+index 3a30cfb..a15607c 100644
+--- a/node_modules/@platejs/math/dist/react/index.js
++++ b/node_modules/@platejs/math/dist/react/index.js
+@@ -1,4 +1,5 @@
+-import { n as BaseEquationPlugin, t as BaseInlineEquationPlugin } from "../BaseInlineEquationPlugin-1MXNHk1G.js";
++﻿import { n as BaseEquationPlugin, t as BaseInlineEquationPlugin } from "../BaseInlineEquationPlugin-1MXNHk1G.js";
++import "katex/dist/katex.min.css";
+ import { isHotkey } from "platejs";
+ import katex from "katex";
+ import { toPlatePlugin, useEditorRef, useElement } from "platejs/react";

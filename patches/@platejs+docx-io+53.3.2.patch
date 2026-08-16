@@ -1,0 +1,52 @@
+diff --git a/node_modules/@platejs/docx-io/dist/index.js b/node_modules/@platejs/docx-io/dist/index.js
+index 469e35e..f2fdf3b 100644
+--- a/node_modules/@platejs/docx-io/dist/index.js
++++ b/node_modules/@platejs/docx-io/dist/index.js
+@@ -520,17 +520,22 @@ const modifiedStyleAttributesBuilder = (docxDocumentInstance, vNode, attributes,
+ 			"center",
+ 			"justify"
+ 		].includes(style["text-align"])) modifiedAttributes.textAlign = style["text-align"];
++		// [MyPaper patch] Plate serializeHtml 的块级 textAlign 输出为 data-slate-text-align 属性（非 style），
++		// style 没有 text-align 时回退读 data 属性（docx-io 原版只认 style → 居中/右对齐丢失）
++		else if (vNode.properties.attributes && ["left", "right", "center", "justify"].includes(vNode.properties.attributes["data-slate-text-align"])) modifiedAttributes.textAlign = vNode.properties.attributes["data-slate-text-align"];
+ 		if (style["font-weight"] && style["font-weight"] === "bold") modifiedAttributes.strong = style["font-weight"];
+ 		if (style["font-family"] && docxDocumentInstance) modifiedAttributes.font = docxDocumentInstance.createFont(style["font-family"]);
+ 		if (style["font-size"]) modifiedAttributes.fontSize = fixupFontSize$1(style["font-size"]);
+ 		if (style["line-height"]) modifiedAttributes.lineHeight = fixupLineHeight(Number.parseFloat(style["line-height"]), style["font-size"] ? fixupFontSize$1(style["font-size"]) || null : null);
+-		if (style["margin-left"] || style["margin-right"]) {
++		if (style["margin-left"] || style["margin-right"] || style["text-indent"]) {
+ 			const leftMargin = style["margin-left"] ? fixupMargin(style["margin-left"]) : void 0;
+ 			const rightMargin = style["margin-right"] ? fixupMargin(style["margin-right"]) : void 0;
++			const firstLineIndent = style["text-indent"] ? fixupMargin(style["text-indent"]) : void 0;
+ 			const indentation = {};
+ 			if (leftMargin) indentation.left = leftMargin;
+ 			if (rightMargin) indentation.right = rightMargin;
+-			if (leftMargin || rightMargin) modifiedAttributes.indentation = indentation;
++			if (firstLineIndent) indentation.firstLine = firstLineIndent;
++			if (leftMargin || rightMargin || firstLineIndent) modifiedAttributes.indentation = indentation;
+ 		}
+ 		if (style.display) modifiedAttributes.display = style.display;
+ 		if (style.width) modifiedAttributes.width = style.width;
+@@ -789,10 +794,11 @@ const buildSpacing = (lineSpacing, beforeSpacing, afterSpacing) => {
+ 	spacingFragment.att("@w", "lineRule", "auto").up();
+ 	return spacingFragment;
+ };
+-const buildIndentation = ({ left, right }) => {
++const buildIndentation = ({ left, right, firstLine }) => {
+ 	const indentationFragment = fragment({ namespaceAlias: { w: namespaces_default.w } }).ele("@w", "ind");
+ 	if (left) indentationFragment.att("@w", "left", String(left));
+ 	if (right) indentationFragment.att("@w", "right", String(right));
++	if (firstLine) indentationFragment.att("@w", "firstLine", String(firstLine));
+ 	indentationFragment.up();
+ 	return indentationFragment;
+ };
+@@ -2088,7 +2094,8 @@ async function findXMLEquivalent(docxDocumentInstance, vNode, xmlFragment) {
+ 		case "blockquote":
+ 		case "code":
+ 		case "pre": {
+-			const paragraphFragment = await buildParagraph(vNode, {}, docxDocumentInstance);
++			const paraStyle = vNode.tagName === "blockquote" ? "Quote" : ["pre", "code"].includes(vNode.tagName || "") ? "CodeBlock" : void 0;
++			const paragraphFragment = await buildParagraph(vNode, paraStyle ? { paragraphStyle: paraStyle } : {}, docxDocumentInstance);
+ 			xmlFragment.import(paragraphFragment);
+ 			return;
+ 		}

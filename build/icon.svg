@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#d9f0e2"/>
+      <stop offset="100%" stop-color="#8fcfab"/>
+    </radialGradient>
+  </defs>
+  <!-- 圆底 -->
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <!-- mini 精灵（线条版，放大 6.4x：132 → 845，居中偏移） -->
+  <g transform="translate(89.6, 89.6) scale(6.4)" fill="none" stroke="#2e7d52" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- 头顶叶子（线条） -->
+    <path d="M66 40 C 62 26, 48 20, 36 24 C 40 34, 52 40, 66 40 Z"/>
+    <path d="M66 40 C 70 26, 84 20, 96 24 C 92 34, 80 40, 66 40 Z"/>
+    <!-- 小芽茎 -->
+    <path d="M63.5 38 C 63.5 43, 64.5 45, 66 45 C 67.5 45, 68.5 43, 68.5 38"/>
+    <!-- 圆脑袋（线条） -->
+    <circle cx="66" cy="76" r="42" stroke="#3f8f63"/>
+    <!-- 眼睛（实心小点 + 高光） -->
+    <circle cx="54" cy="72" r="6.2" fill="#2e4a3a" stroke="none"/>
+    <circle cx="56.2" cy="70.2" r="2.2" fill="#fff" stroke="none"/>
+    <circle cx="78" cy="72" r="6.2" fill="#2e4a3a" stroke="none"/>
+    <circle cx="80.2" cy="70.2" r="2.2" fill="#fff" stroke="none"/>
+    <!-- 微笑 -->
+    <path d="M56 88 Q 66 98, 76 88"/>
+    <!-- 小脚（线条） -->
+    <ellipse cx="52" cy="118" rx="8" ry="4.5"/>
+    <ellipse cx="80" cy="118" rx="8" ry="4.5"/>
+  </g>
+</svg>

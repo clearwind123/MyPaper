@@ -1,0 +1,52 @@
+# 依赖与构建产物
+node_modules/
+out/
+dist/
+*.log
+.DS_Store
+
+# 用户数据（本地运行数据，不进版本库）
+usersData/
+ocrImages/
+todoList/
+emojis/
+chi_sim.traineddata
+_aux_extract.txt
+ocrHistory.json
+
+# 工具/临时目录
+.reasonix/
+.tmp-center-probe/
+
+# postinstall / vite 插件生成的资产（npm install 后自动重建，勿提交）
+src/renderer/public/tesseract/
+src/renderer/public/tesseract-core/
+src/renderer/public/tesseract-data/
+src/renderer/public/vendor/
+src/renderer/public/cmaps/
+src/renderer/public/flyfish-viewer-assets.json
+
+# 历史会话记录（内部资料，不公开）
+*阶段对话.md
+
+# 内部文档与本地配置（含本机路径/工具配置，不公开）
+功能代码定位.md
+reasonix.toml
+
+# 内部参考图（设计稿/界面截图）
+AIUI1.png
+AIUI2.png
+AIUI3.png
+BC.png
+FC.png
+SUI.jpg
+Desgin_v0.01.png
+
+# 第三方二进制发布包（C# 程序 + WebView2 运行时，仅打包进安装包，不提交源码库）
+MyAI Browser-发布包/
+
+# TypeScript 增量编译缓存
+*.tsbuildinfo
+
+# 打包产物
+release/
